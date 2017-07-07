@@ -272,7 +272,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/07/07/string-join/" itemprop="url">string_join</a></h1>
+                <a class="post-title-link" href="/2017/07/07/string-join/" itemprop="url">String Join</a></h1>
         
 
         <div class="post-meta">
@@ -321,10 +321,10 @@
       
         
           
-            <p>###简单字符串<br>直接使用”+”，例如：full_name = prefix + name</p>
-<p>###复杂字符串<br>有格式化需求时，使用”%”进行格式化连接，例如：result = “result is %s:%d” % (name, score)</p>
-<p>###大量字符串拼接<br>发生在循环体里时，使用”str.join”进行连接，例如：result = ‘’.join(names_tuple)</p>
-<p>##总结<br>前两条出于代码美观考虑，后一条出于性能考虑</p>
+            <h3 id="简单字符串"><a href="#简单字符串" class="headerlink" title="简单字符串"></a>简单字符串</h3><p>直接使用”+”，<br>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">full_name = prefix + name</div></pre></td></tr></table></figure></p>
+<h3 id="复杂字符串"><a href="#复杂字符串" class="headerlink" title="复杂字符串"></a>复杂字符串</h3><p>有格式化需求时，使用”%”进行格式化连接，<br>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">result = &quot;result is %s:%d&quot; % (name, score)</div></pre></td></tr></table></figure></p>
+<h3 id="大量字符串拼接"><a href="#大量字符串拼接" class="headerlink" title="大量字符串拼接"></a>大量字符串拼接</h3><p>发生在循环体里时，使用”str.join”进行连接，<br>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">result = &apos;&apos;.join(names_tuple)</div></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>前两条出于代码美观考虑，后一条出于性能考虑</p>
 
           
         
