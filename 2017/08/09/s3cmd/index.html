@@ -93,12 +93,16 @@
 
 
 
-<meta property="og:type" content="website">
-<meta property="og:title" content="yanyx&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/index.html">
+<meta name="description" content="创建一个默认的Config文件1234567891011121314151617181920212223242526272829303132333435363738[root@ceph03 ~]# s3cmd --configureEnter new values or accept defaults in brackets with Enter.Refer to user manual for">
+<meta property="og:type" content="article">
+<meta property="og:title" content="s3cmd for radosgw">
+<meta property="og:url" content="http://yoursite.com/2017/08/09/s3cmd/index.html">
 <meta property="og:site_name" content="yanyx&#39;s blog">
+<meta property="og:description" content="创建一个默认的Config文件1234567891011121314151617181920212223242526272829303132333435363738[root@ceph03 ~]# s3cmd --configureEnter new values or accept defaults in brackets with Enter.Refer to user manual for">
+<meta property="og:updated_time" content="2017-08-09T06:04:04.000Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="yanyx&#39;s blog">
+<meta name="twitter:title" content="s3cmd for radosgw">
+<meta name="twitter:description" content="创建一个默认的Config文件1234567891011121314151617181920212223242526272829303132333435363738[root@ceph03 ~]# s3cmd --configureEnter new values or accept defaults in brackets with Enter.Refer to user manual for">
 
 
 
@@ -126,13 +130,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/"/>
+  <link rel="canonical" href="http://yoursite.com/2017/08/09/s3cmd/"/>
 
 
 
 
 
-  <title>yanyx's blog</title>
+  <title>s3cmd for radosgw | yanyx's blog</title>
   
 
 
@@ -157,9 +161,7 @@
     
   
 
-  <div class="container sidebar-position-left 
-   page-home 
- ">
+  <div class="container sidebar-position-left page-post-detail ">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
@@ -242,9 +244,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-  <section id="posts" class="posts-expand">
+
+  <div id="posts" class="posts-expand">
     
-      
 
   
 
@@ -270,9 +272,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/08/09/s3cmd/" itemprop="url">s3cmd for radosgw</a></h1>
+          <h1 class="post-title" itemprop="name headline">s3cmd for radosgw</h1>
         
 
         <div class="post-meta">
@@ -319,28 +319,33 @@
       
 
       
-        
-          
-            <p>创建一个默认的Config文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">[root@ceph03 ~]# s3cmd --configure</div><div class="line"></div><div class="line">Enter new values or accept defaults in brackets with Enter.</div><div class="line">Refer to user manual for detailed description of all options.</div><div class="line"></div><div class="line">Access key and Secret key are your identifiers for Amazon S3. Leave them empty for using the env variables.</div><div class="line">Access Key: key</div><div class="line">Secret Key: secret</div><div class="line">Default Region [US]:</div><div class="line"></div><div class="line">Encryption password is used to protect your files from reading</div><div class="line">by unauthorized persons while in transfer to S3</div><div class="line">Encryption password:</div><div class="line">Path to GPG program [/usr/bin/gpg]:</div><div class="line"></div><div class="line">When using secure HTTPS protocol all communication with Amazon S3</div><div class="line">servers is protected from 3rd party eavesdropping. This method is</div><div class="line">slower than plain HTTP, and can only be proxied with Python 2.7 or newer</div><div class="line">Use HTTPS protocol [Yes]: No</div><div class="line"></div><div class="line">On some networks all internet access must go through a HTTP proxy.</div><div class="line">Try setting it here if you can&apos;t connect to S3 directly</div><div class="line">HTTP Proxy server name:</div><div class="line"></div><div class="line">New settings:</div><div class="line">  Access Key: key</div><div class="line">  Secret Key: secret</div><div class="line">  Default Region: US</div><div class="line">  Encryption password:</div><div class="line">  Path to GPG program: /usr/bin/gpg</div><div class="line">  Use HTTPS protocol: False</div><div class="line">  HTTP Proxy server name:</div><div class="line">  HTTP Proxy server port: 0</div><div class="line"></div><div class="line">Test access with supplied credentials? [Y/n] n</div><div class="line"></div><div class="line">Save settings? [y/N] y</div><div class="line">Configuration saved to &apos;/root/.s3cfg&apos;</div></pre></td></tr></table></figure></p>
+        <p>创建一个默认的Config文件<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div></pre></td><td class="code"><pre><div class="line">[root@ceph03 ~]# s3cmd --configure</div><div class="line"></div><div class="line">Enter new values or accept defaults in brackets with Enter.</div><div class="line">Refer to user manual for detailed description of all options.</div><div class="line"></div><div class="line">Access key and Secret key are your identifiers for Amazon S3. Leave them empty for using the env variables.</div><div class="line">Access Key: key</div><div class="line">Secret Key: secret</div><div class="line">Default Region [US]:</div><div class="line"></div><div class="line">Encryption password is used to protect your files from reading</div><div class="line">by unauthorized persons while in transfer to S3</div><div class="line">Encryption password:</div><div class="line">Path to GPG program [/usr/bin/gpg]:</div><div class="line"></div><div class="line">When using secure HTTPS protocol all communication with Amazon S3</div><div class="line">servers is protected from 3rd party eavesdropping. This method is</div><div class="line">slower than plain HTTP, and can only be proxied with Python 2.7 or newer</div><div class="line">Use HTTPS protocol [Yes]: No</div><div class="line"></div><div class="line">On some networks all internet access must go through a HTTP proxy.</div><div class="line">Try setting it here if you can&apos;t connect to S3 directly</div><div class="line">HTTP Proxy server name:</div><div class="line"></div><div class="line">New settings:</div><div class="line">  Access Key: key</div><div class="line">  Secret Key: secret</div><div class="line">  Default Region: US</div><div class="line">  Encryption password:</div><div class="line">  Path to GPG program: /usr/bin/gpg</div><div class="line">  Use HTTPS protocol: False</div><div class="line">  HTTP Proxy server name:</div><div class="line">  HTTP Proxy server port: 0</div><div class="line"></div><div class="line">Test access with supplied credentials? [Y/n] n</div><div class="line"></div><div class="line">Save settings? [y/N] y</div><div class="line">Configuration saved to &apos;/root/.s3cfg&apos;</div></pre></td></tr></table></figure></p>
 <p>修改config文件中的access_key,secret_key,host_base 和 host_bucket</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div></pre></td><td class="code"><pre><div class="line">[default]</div><div class="line">access_key = O9P5CKAYAB4AHYGQPGT1</div><div class="line">access_token =</div><div class="line">add_encoding_exts =</div><div class="line">add_headers =</div><div class="line">bucket_location = US</div><div class="line">ca_certs_file =</div><div class="line">cache_file =</div><div class="line">check_ssl_certificate = True</div><div class="line">check_ssl_hostname = True</div><div class="line">cloudfront_host = cloudfront.amazonaws.com</div><div class="line">default_mime_type = binary/octet-stream</div><div class="line">delay_updates = False</div><div class="line">delete_after = False</div><div class="line">delete_after_fetch = False</div><div class="line">delete_removed = False</div><div class="line">dry_run = False</div><div class="line">enable_multipart = True</div><div class="line">encoding = UTF-8</div><div class="line">encrypt = False</div><div class="line">expiry_date =</div><div class="line">expiry_days =</div><div class="line">expiry_prefix =</div><div class="line">follow_symlinks = False</div><div class="line">force = False</div><div class="line">get_continue = False</div><div class="line">gpg_command = /usr/bin/gpg</div><div class="line">gpg_decrypt = %(gpg_command)s -d --verbose --no-use-agent --batch --yes --passphrase-fd %(passphrase_fd)s -o %(output_file)s %(input_file)s</div><div class="line">gpg_encrypt = %(gpg_command)s -c --verbose --no-use-agent --batch --yes --passphrase-fd %(passphrase_fd)s -o %(output_file)s %(input_file)s</div><div class="line">gpg_passphrase =</div><div class="line">guess_mime_type = True</div><div class="line">host_base = 172.16.143.171:8080</div><div class="line">host_bucket = 172.16.143.171:8080</div><div class="line">human_readable_sizes = False</div><div class="line">invalidate_default_index_on_cf = False</div><div class="line">invalidate_default_index_root_on_cf = True</div><div class="line">invalidate_on_cf = False</div><div class="line">kms_key =</div><div class="line">limitrate = 0</div><div class="line">list_md5 = False</div><div class="line">log_target_prefix =</div><div class="line">long_listing = False</div><div class="line">max_delete = -1</div><div class="line">mime_type =</div><div class="line">multipart_chunk_size_mb = 15</div><div class="line">multipart_max_chunks = 10000</div><div class="line">preserve_attrs = True</div><div class="line">progress_meter = True</div><div class="line">proxy_host =</div><div class="line">proxy_port = 0</div><div class="line">put_continue = False</div><div class="line">recursive = False</div><div class="line">recv_chunk = 65536</div><div class="line">reduced_redundancy = False</div><div class="line">requester_pays = False</div><div class="line">restore_days = 1</div><div class="line">secret_key = BWyaFoWn99pN6MnaHs3NCZP6mMELMtFdJUxuONyX</div><div class="line">send_chunk = 65536</div><div class="line">server_side_encryption = False</div><div class="line">signature_v2 = False</div><div class="line">simpledb_host = sdb.amazonaws.com</div><div class="line">skip_existing = False</div><div class="line">socket_timeout = 300</div><div class="line">stats = False</div><div class="line">stop_on_error = False</div><div class="line">storage_class =</div><div class="line">urlencoding_mode = normal</div><div class="line">use_https = False</div><div class="line">use_mime_magic = True</div><div class="line">verbosity = WARNING</div><div class="line">website_endpoint = http://%(bucket)s.s3-website-%(location)s.amazonaws.com/</div><div class="line">website_error =</div><div class="line">website_index = index.html</div></pre></td></tr></table></figure>
 <p>接下来就可以通过s3cmd来进行操作了</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">[root@ceph02 ~]# s3cmd mb s3://test</div><div class="line">Bucket &apos;s3://test/&apos; created</div><div class="line">[root@ceph02 ~]# s3cmd put anaconda-ks.cfg s3://test/anaconda</div><div class="line">upload: &apos;anaconda-ks.cfg&apos; -&gt; &apos;s3://test/anaconda&apos;  [1 of 1]</div><div class="line"> 1030 of 1030   100% in    0s    57.69 kB/s  done</div><div class="line">[root@ceph02 ~]# s3cmd ls s3://test</div><div class="line">2017-08-09 06:01      1030   s3://test/anaconda</div></pre></td></tr></table></figure>
 
-          
+      
+    </div>
+
+    <div>
+      
         
+
       
     </div>
 
     <div>
       
-    </div>
+        
 
-    <div>
       
     </div>
 
     <div>
+      
+        
+
       
     </div>
 
@@ -348,256 +353,38 @@
       
 
       
-
-      
-
       
       
-        <div class="post-eof"></div>
+
       
-    </footer>
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/07/string-join/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="yanyixing">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="yanyx's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/07/string-join/" itemprop="url">String Join</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
             
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-07T18:01:39+08:00">
-                2017-07-07
-              </time>
+              <a href="/2017/07/07/string-join/" rel="next" title="String Join">
+                <i class="fa fa-chevron-left"></i> String Join
+              </a>
             
+          </div>
 
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
             
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
+          </div>
         </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
       
 
       
-        
-          
-            <h3 id="简单字符串"><a href="#简单字符串" class="headerlink" title="简单字符串"></a>简单字符串</h3><p>直接使用”+”，<br>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">full_name = prefix + name</div></pre></td></tr></table></figure></p>
-<h3 id="复杂字符串"><a href="#复杂字符串" class="headerlink" title="复杂字符串"></a>复杂字符串</h3><p>有格式化需求时，使用”%”进行格式化连接，<br>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">result = &quot;result is %s:%d&quot; % (name, score)</div></pre></td></tr></table></figure></p>
-<h3 id="大量字符串拼接"><a href="#大量字符串拼接" class="headerlink" title="大量字符串拼接"></a>大量字符串拼接</h3><p>发生在循环体里时，使用”str.join”进行连接，<br>例如：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">result = &apos;&apos;.join(names_tuple)</div></pre></td></tr></table></figure></p>
-<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>前两条出于代码美观考虑，后一条出于性能考虑</p>
-
-          
-        
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
       
     </footer>
   </article>
 
 
-    
-      
 
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/07/07/hello-world/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="yanyixing">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/avatar.jpeg">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="yanyx's blog">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/07/hello-world/" itemprop="url">Hello World</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-07T17:34:40+08:00">
-                2017-07-07
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          
-            <p>Welcome to <a href="https://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-<p>More info: <a href="https://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-
-          
-        
+    <div class="post-spread">
       
     </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
-  </section>
-
-  
+  </div>
 
 
           </div>
@@ -605,6 +392,10 @@
 
 
           
+  <div class="comments" id="comments">
+    
+  </div>
+
 
         </div>
         
@@ -802,10 +593,10 @@
   
 
   
-    <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.1"></script>
 <script type="text/javascript" src="/js/src/post-details.js?v=5.1.1"></script>
 
-  
+
 
   
 
