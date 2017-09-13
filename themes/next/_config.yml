@@ -157,7 +157,7 @@ social_icons:
   GitHub: github
   #Twitter: twitter
   #Weibo: weibo
-  Mail: fa-envelope
+  Mail: envelope
 
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.jpg
