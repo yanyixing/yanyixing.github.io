@@ -143,6 +143,7 @@ font:
 social:
   #LinkLabel: Link
   GitHub: https://github.com/yanyixing
+  Mail: mailto:yixingyan@gmail.com
 
 # Social Links Icons
 # Icon Mapping:
@@ -156,7 +157,7 @@ social_icons:
   GitHub: github
   #Twitter: twitter
   #Weibo: weibo
-
+  Mail: fa-envelope
 
 # Sidebar Avatar
 # in theme directory(source/images): /images/avatar.jpg
