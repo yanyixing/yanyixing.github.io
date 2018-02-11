@@ -127,7 +127,8 @@ osds.yml.sample中定了多种osd部署方式，可以根据需要灵活调整�
 
 导入新的crushmap
 
-    ceph osd setcrushmap -i crushmap.txt
+    crushtool -c crushmap.txt -o crushmap
+    ceph osd setcrushmap -i crushmap
     
 
 创建POOL
