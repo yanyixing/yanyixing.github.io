@@ -96,8 +96,12 @@ Thanks for using MariaDB!
 
 ```vim
 server-id=1
-binlog-ignore-db=mysql
 log-bin = /var/lib/mysql/mysql-bin
+binlog-ignore-db=mysql
+binlog-ignore-db=information_schema
+binlog-ignore-db=performance_schema
+auto-increment-increment = 2
+auto-increment-offset = 1
 ```
 
 重启db
@@ -150,8 +154,12 @@ mysql -u root -p < /root/db_dump.sql
 
 ```vim
 server-id=2
+og-bin = /var/lib/mysql/mysql-bin
 binlog-ignore-db=mysql
-log-bin = /var/lib/mysql/mysql-bin
+binlog-ignore-db=information_schema
+binlog-ignore-db=performance_schema
+auto-increment-increment = 2
+auto-increment-offset = 2
 ```
 重启db
 
