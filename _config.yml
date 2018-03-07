@@ -72,3 +72,5 @@ deploy:
   repo: git@github.com:yanyixing/yanyixing.github.io.git
   branch: master
 
+sitemap:
+  path: sitemap.xml
