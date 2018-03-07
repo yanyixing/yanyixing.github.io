@@ -100,8 +100,6 @@ log-bin = /var/lib/mysql/mysql-bin
 binlog-ignore-db=mysql
 binlog-ignore-db=information_schema
 binlog-ignore-db=performance_schema
-auto-increment-increment = 2
-auto-increment-offset = 1
 ```
 
 重启db
@@ -158,8 +156,6 @@ og-bin = /var/lib/mysql/mysql-bin
 binlog-ignore-db=mysql
 binlog-ignore-db=information_schema
 binlog-ignore-db=performance_schema
-auto-increment-increment = 2
-auto-increment-offset = 2
 ```
 重启db
 
@@ -182,3 +178,20 @@ SHOW SLAVE STATUS\G
 
 ## 测试
 在master节点中创建db，也可以在slave节点中看到。
+
+## 双向复制
+上面的配置实现了host1 --> host2 的复制关系，如需要实现双向复制，只需要按照上面的步骤再配置从 host2 --> host1 的复制关机即可。
+
+另外在host1的/ect/my.cnf中添加如下内容
+
+```bash
+auto-increment-increment = 2
+auto-increment-offset = 1
+```
+
+在host2的/ect/my.cnf中添加如下内容
+
+```bash
+auto-increment-increment = 2
+auto-increment-offset = 2
+```
