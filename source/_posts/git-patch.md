@@ -1,12 +1,9 @@
 ---
-title: git_patch
+title: Git patch
 date: 2018-03-08 14:01:19
 tags: git
 ---
-
-# git format-patch
-
-适用于git的patch，包含diff信息，包含提交人，提交时间等 如果<font color=red>git format-patch</font>生成的补丁不能打到当前分支，git am会给出提示，并协助你完成打补丁工作
+git format-patch适用于git的patch，包含diff信息，包含提交人，提交时间等 如果生成的补丁不能打到当前分支，git am会给出提示，并协助你完成打补丁工作
 
 ## 对比分支生成patch
 
