@@ -23,7 +23,7 @@ yum repolist
 找到需要同步的yum源，通过下面的命令进行同步
 
 `
-resposync --repoid=<$reponame> --download-path=<$path>
+reposync --repoid=<$reponame> --download_path=<$path>
 `
 
 这样就把公网的yum源同步到本地磁盘了，以后就可以通过下载下来的内容搭建内网yum源
