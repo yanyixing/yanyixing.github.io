@@ -1,5 +1,5 @@
 ---
-title: rpm-mock
+title: 通过mock来构建rpm包
 date: 2018-09-25 22:50:54
 tags: ['linux']
 ---
