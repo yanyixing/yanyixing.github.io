@@ -5,8 +5,7 @@ tags: ['linux']
 ---
 
 ## 概述
-mock是一个构建rpm包的工具，你可以使用mock来编译不同系统（CentOS,RedHat和Fedora）版本的rpm包。
-
+mock是一个构建rpm包的工具，你可以使用mock来编译不同系统（CentOS,RedHat和Fedora）版本的rpm包。  
 相比通过rpmbuild来构建rpm包，使用mock通过使用chroot技术，可以在一个干净的环境中来构建rpm包。
 
 ## 安装mock
@@ -26,8 +25,7 @@ usermod -a -G mock <user>
 
 ## 构建准备
 
-使用mock来构建rpm包，需要要有source rpm。
-
+使用mock来构建rpm包，需要要有source rpm。  
 如果有一个spec文件，则可以通过rpmbuild来构建source rpm
 
 ```
@@ -92,7 +90,7 @@ mock -r epel-7-x86_64 --clean
 ### 执行构建
 
 ```
-mock -r epel-7-x86_64 rebuild xxx.src.rpm
+mock -r epel-7-x86_64 --rebuild xxx.src.rpm
 ```
 当构建完成，结构和日志都在/var/lib/mock/epel-7-x86_64/result目录下。你可可以通过添加参数 --resultdir来调整目录
 
