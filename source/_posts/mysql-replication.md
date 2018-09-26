@@ -1,5 +1,5 @@
 ---
-title: mysql-replication
+title: mysql主从复制
 date: 2018-03-02 17:23:27
 tags: ['linux','mysql','ha']
 ---

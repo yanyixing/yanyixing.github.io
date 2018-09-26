@@ -1,5 +1,5 @@
 ---
-title: pacemaker+mysql
+title: 通过pacemaker管理mysql
 date: 2018-03-05 17:59:24
 tags: ['linux','mysql','ha']
 ---

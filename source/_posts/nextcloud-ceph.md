@@ -1,5 +1,5 @@
 ---
-title: nextcloud-ceph
+title: nextcloud对接ceph
 date: 2017-08-09 14:38:45
 tags:
 ---
