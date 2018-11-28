@@ -1,7 +1,7 @@
 ---
 title: ceph-ansible
 date: 2018-02-06 23:13:09
-tags:
+tags: ceph
 ---
 
 通过本文了解如果通过ceph-ansible来安装ceph
