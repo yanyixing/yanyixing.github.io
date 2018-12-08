@@ -4,6 +4,7 @@ date: 2018-12-08 15:15:00
 tags: k8s
 ---
 
+
 本次实验，通过kubeadm来安装一个单节点的k8s环境。
 
 本次实验是在虚拟机上进行，虚拟机的配置如下：
@@ -12,6 +13,7 @@ tags: k8s
 | ----- | ----- | ----- | ----- |
 | CentOS Linux release 7.6.1810 (Core) | 2 vCPU | 2G | 172.16.143.171 |
 
+# 环境准备
 
 安装docker  
 
@@ -34,6 +36,7 @@ swapoff -a
 
 ```
 
+# 安装k8s
 
 配置kubernetes阿里云源  
 
@@ -238,4 +241,6 @@ kube-system   kube-scheduler-kube            1/1     Running   1          40m
 kube-system   weave-net-csgmh                2/2     Running   0          27m
 ```
 
-
+# 参考
+* [https://kubernetes.io/docs/setup/independent/install-kubeadm/](https://kubernetes.io/docs/setup/independent/install-kubeadm/)
+* [https://zhuanlan.zhihu.com/p/46341911](https://zhuanlan.zhihu.com/p/46341911) 
