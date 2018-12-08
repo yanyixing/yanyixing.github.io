@@ -242,5 +242,5 @@ kube-system   weave-net-csgmh                2/2     Running   0          27m
 ```
 
 # 参考
-* [https://kubernetes.io/docs/setup/independent/install-kubeadm/](https://kubernetes.io/docs/setup/independent/install-kubeadm/)
-* [https://zhuanlan.zhihu.com/p/46341911](https://zhuanlan.zhihu.com/p/46341911) 
+- [https://kubernetes.io/docs/setup/independent/install-kubeadm/](https://kubernetes.io/docs/setup/independent/install-kubeadm/)
+- [https://zhuanlan.zhihu.com/p/46341911](https://zhuanlan.zhihu.com/p/46341911) 
