@@ -1,5 +1,5 @@
 ---
-title: rgw_multi_site
+title: Ceph RGW multi site 配置
 date: 2019-03-09 20:04:30
 tags: ceph
 ---
