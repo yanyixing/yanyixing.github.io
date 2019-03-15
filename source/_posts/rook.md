@@ -1,7 +1,7 @@
 ---
 title: Rook
 date: 2019-03-12 14:42:10
-tags: ceph
+tags: ['ceph','k8s']
 ---
 
 # 概述
