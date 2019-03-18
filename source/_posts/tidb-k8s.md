@@ -299,3 +299,4 @@ MySQL [(none)]>
 # 参考
 
 * [https://github.com/pingcap/tidb-operator/blob/master/docs/local-dind-tutorial.md](https://github.com/pingcap/tidb-operator/blob/master/docs/local-dind-tutorial.md)
+* [https://github.com/pingcap/tidb-operator/blob/master/docs/setup.md](https://github.com/pingcap/tidb-operator/blob/master/docs/setup.md)
