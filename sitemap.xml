@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>https://yanyixing.github.io/2018/03/05/pacemaker-mysql/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2018/09/23/redis-persistence/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2018/06/12/reposync/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2019/03/09/rgw-multi-site/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2019/03/13/rgw-with-ec/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2019/03/12/rook/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2018/09/25/rpm-mock/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2017/08/09/s3cmd/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2017/12/18/service-too-quickly/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2018/12/09/sql-join/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2017/07/07/string-join/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2019/03/18/tidb-k8s/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2017/09/12/timedatectl/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/tags/index.html</loc>
+    
+    <lastmod>2019-10-14T05:50:12.044Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2017/09/26/logrotate/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.040Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2018/03/02/mysql-replication/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.040Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2017/08/09/nextcloud-ceph/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.040Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2018/03/08/git-patch/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.028Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2018/12/08/install-k8s/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.028Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2019/10/14/linux-performance-tools/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.028Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2017/10/10/centos-net/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.016Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2018/02/06/ceph-ansible/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.016Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2018/11/27/ceph-deploy/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.016Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2018/12/10/ceph-mgr-restful/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.016Z</lastmod>
+    
+  </url>
+  
+  <url>
+    <loc>https://yanyixing.github.io/2019/01/30/disk-extend/</loc>
+    
+    <lastmod>2019-10-14T05:50:12.016Z</lastmod>
+    
+  </url>
+  
+</urlset>

@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="0XQmZEr9kzc4dxL8nE7ZP6nQqb32vqBya9Or3ToSS-I" />
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-icon-180x180.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="ceph,k8s," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="yanyx's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="概述本文主要介绍如何通过rook在k8s上部署一套ceph集群。测试的k8s集群一共三个节点：   12345[root@kube01 ~]# kubectl get nodesNAME     STATUS   ROLES    AGE    VERSIONkube01   Ready    master   3h3m   v1.13.4kube02   Ready    master   17">
+<meta name="keywords" content="ceph,k8s">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rook">
+<meta property="og:url" content="https://yanyixing.github.io/2019/03/12/rook/index.html">
+<meta property="og:site_name" content="yanyx&#39;s blog">
+<meta property="og:description" content="概述本文主要介绍如何通过rook在k8s上部署一套ceph集群。测试的k8s集群一共三个节点：   12345[root@kube01 ~]# kubectl get nodesNAME     STATUS   ROLES    AGE    VERSIONkube01   Ready    master   3h3m   v1.13.4kube02   Ready    master   17">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-14T05:50:12.044Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Rook">
+<meta name="twitter:description" content="概述本文主要介绍如何通过rook在k8s上部署一套ceph集群。测试的k8s集群一共三个节点：   12345[root@kube01 ~]# kubectl get nodesNAME     STATUS   ROLES    AGE    VERSIONkube01   Ready    master   3h3m   v1.13.4kube02   Ready    master   17">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yanyixing.github.io/2019/03/12/rook/"/>
+
+
+
+
+
+  <title>Rook | yanyx's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yanyx's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yanyixing.github.io/2019/03/12/rook/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yanyx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yanyx's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Rook</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-12T14:42:10+00:00">
+                2019-03-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2019/03/12/rook/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2019/03/12/rook/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2019/03/12/rook/" class="leancloud_visitors" data-flag-title="Rook">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>本文主要介绍如何通过rook在k8s上部署一套ceph集群。<br>测试的k8s集群一共三个节点：  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">[root@kube01 ~]# kubectl get nodes</span><br><span class="line">NAME     STATUS   ROLES    AGE    VERSION</span><br><span class="line">kube01   Ready    master   3h3m   v1.13.4</span><br><span class="line">kube02   Ready    master   175m   v1.13.4</span><br><span class="line">kube03   Ready    master   172m   v1.13.4</span><br></pre></td></tr></table></figure>
+<h1 id="Rook部署"><a href="#Rook部署" class="headerlink" title="Rook部署"></a>Rook部署</h1><p>clone rook代码  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">git clone https://github.com/rook/rook.git</span><br><span class="line">cd rook/</span><br><span class="line">git checkout v0.9.3</span><br></pre></td></tr></table></figure>
+<p>通过kubectl执行rook-ceph的operator</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[root@kube01 rook]# kubectl apply -f cluster/examples/kubernetes/ceph/operator.yaml</span><br><span class="line">namespace/rook-ceph-system created</span><br><span class="line">customresourcedefinition.apiextensions.k8s.io/cephclusters.ceph.rook.io created</span><br><span class="line">customresourcedefinition.apiextensions.k8s.io/cephfilesystems.ceph.rook.io created</span><br><span class="line">customresourcedefinition.apiextensions.k8s.io/cephobjectstores.ceph.rook.io created</span><br><span class="line">customresourcedefinition.apiextensions.k8s.io/cephobjectstoreusers.ceph.rook.io created</span><br><span class="line">customresourcedefinition.apiextensions.k8s.io/cephblockpools.ceph.rook.io created</span><br><span class="line">customresourcedefinition.apiextensions.k8s.io/volumes.rook.io created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/rook-ceph-cluster-mgmt created</span><br><span class="line">role.rbac.authorization.k8s.io/rook-ceph-system created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/rook-ceph-global created</span><br><span class="line">clusterrole.rbac.authorization.k8s.io/rook-ceph-mgr-cluster created</span><br><span class="line">serviceaccount/rook-ceph-system created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/rook-ceph-system created</span><br><span class="line">clusterrolebinding.rbac.authorization.k8s.io/rook-ceph-global created</span><br><span class="line">deployment.apps/rook-ceph-operator created</span><br></pre></td></tr></table></figure>
+<p>等待全部pod都running状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[root@kube01 rook]# kubectl get pods -n rook-ceph-system -owide</span><br><span class="line">NAME                                  READY   STATUS    RESTARTS   AGE     IP               NODE     NOMINATED NODE   READINESS GATES</span><br><span class="line">rook-ceph-agent-7zgcv                 1/1     Running   0          2m15s   192.168.10.181   kube01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">rook-ceph-agent-ww4sk                 1/1     Running   0          2m15s   192.168.10.129   kube02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">rook-ceph-agent-xjgm4                 1/1     Running   0          2m15s   192.168.10.44    kube03   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">rook-ceph-operator-5f4ff4d57d-fm8s5   1/1     Running   0          3m41s   10.244.1.2       kube02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">rook-discover-2mwpn                   1/1     Running   0          2m15s   10.244.0.10      kube01   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">rook-discover-nqhr8                   1/1     Running   0          2m15s   10.244.1.3       kube02   &lt;none&gt;           &lt;none&gt;</span><br><span class="line">rook-discover-wgpng                   1/1     Running   0          2m15s   10.244.2.2       kube03   &lt;none&gt;           &lt;none&gt;</span><br></pre></td></tr></table></figure>
+<p>ceph会使用每个节点的vdb作为osd，所以需要修改cluster/examples/kubernetes/ceph/cluster.yaml的内容</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">storage: # cluster level storage configuration and selection</span><br><span class="line">  useAllNodes: true</span><br><span class="line">  useAllDevices: false</span><br><span class="line">  deviceFilter: &quot;^vdb&quot;</span><br><span class="line">  location:</span><br><span class="line">  config:</span><br><span class="line">    # The default and recommended storeType is dynamically set to bluestore for devices and filestore for directories.</span><br><span class="line">    # Set the storeType explicitly only if it is required not to use the default.</span><br><span class="line">    storeType: bluestore</span><br><span class="line">    #databaseSizeMB: &quot;1024&quot; # this value can be removed for environments with normal sized disks (100 GB or larger)</span><br><span class="line">    #journalSizeMB: &quot;1024&quot;  # this value can be removed for environments with normal sized disks (20 GB or larger)</span><br><span class="line">    osdsPerDevice: &quot;1&quot; # this value can be overridden at the node or device level</span><br></pre></td></tr></table></figure>
+<p>通过kubectl部署ceph集群</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">[root@kube01 rook]# kubectl apply -f cluster/examples/kubernetes/ceph/cluster.yaml</span><br><span class="line">namespace/rook-ceph created</span><br><span class="line">serviceaccount/rook-ceph-osd created</span><br><span class="line">serviceaccount/rook-ceph-mgr created</span><br><span class="line">role.rbac.authorization.k8s.io/rook-ceph-osd created</span><br><span class="line">role.rbac.authorization.k8s.io/rook-ceph-mgr-system created</span><br><span class="line">role.rbac.authorization.k8s.io/rook-ceph-mgr created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/rook-ceph-cluster-mgmt created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/rook-ceph-osd created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/rook-ceph-mgr created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/rook-ceph-mgr-system created</span><br><span class="line">rolebinding.rbac.authorization.k8s.io/rook-ceph-mgr-cluster created</span><br><span class="line">cephcluster.ceph.rook.io/rook-ceph created</span><br></pre></td></tr></table></figure>
+<p>等ceph部署完成，可以看到有三个mon，一个mgr和三个osd</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@kube01 rook]# kubectl get pods -n rook-ceph</span><br><span class="line">NAME                                 READY   STATUS      RESTARTS   AGE</span><br><span class="line">rook-ceph-mgr-a-66db78887f-lmhcf     1/1     Running     0          4m13s</span><br><span class="line">rook-ceph-mon-a-b6556df54-t7cd4      1/1     Running     0          4m53s</span><br><span class="line">rook-ceph-mon-b-7f84c6d4b-nhjj6      1/1     Running     0          4m42s</span><br><span class="line">rook-ceph-mon-c-868c5b476b-ghfqs     1/1     Running     0          4m32s</span><br><span class="line">rook-ceph-osd-0-6fdf57bcb7-bf6f2     1/1     Running     0          54s</span><br><span class="line">rook-ceph-osd-1-8c99b7447-h4mfd      1/1     Running     0          39s</span><br><span class="line">rook-ceph-osd-2-66b76d6944-5df9j     1/1     Running     0          27s</span><br><span class="line">rook-ceph-osd-prepare-kube01-dfrp2   0/2     Completed   0          3m50s</span><br><span class="line">rook-ceph-osd-prepare-kube02-pnbsc   0/2     Completed   0          3m49s</span><br><span class="line">rook-ceph-osd-prepare-kube03-4ztl9   0/2     Completed   0          3m48s</span><br></pre></td></tr></table></figure>
+<p>安装ceph-tool，登录到ceph-tools的pod，可以执行ceph相关的命令，查看ceph状态</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">[root@kube01 rook]# kubectl apply -f cluster/examples/kubernetes/ceph/toolbox.yaml</span><br><span class="line">deployment.apps/rook-ceph-tools created</span><br><span class="line">[root@kube01 rook]# kubectl get pods -n rook-ceph</span><br><span class="line">NAME                                 READY   STATUS    RESTARTS   AGE</span><br><span class="line">rook-ceph-mgr-a-66db78887f-lmhcf     1/1     Running   0          5m10s</span><br><span class="line">rook-ceph-mon-a-b6556df54-t7cd4      1/1     Running   0          5m50s</span><br><span class="line">rook-ceph-mon-b-7f84c6d4b-nhjj6      1/1     Running   0          5m39s</span><br><span class="line">rook-ceph-mon-c-868c5b476b-ghfqs     1/1     Running   0          5m29s</span><br><span class="line">rook-ceph-osd-0-6fdf57bcb7-bf6f2     1/1     Running   0          111s</span><br><span class="line">rook-ceph-osd-1-8c99b7447-h4mfd      1/1     Running   0          96s</span><br><span class="line">rook-ceph-osd-2-66b76d6944-5df9j     1/1     Running   0          84s</span><br><span class="line">rook-ceph-osd-prepare-kube01-d2rrt   1/2     Running   0          49s</span><br><span class="line">rook-ceph-osd-prepare-kube02-jxl6g   1/2     Running   0          47s</span><br><span class="line">rook-ceph-osd-prepare-kube03-fz276   1/2     Running   0          45s</span><br><span class="line">rook-ceph-tools-544fb656d-tddrx      1/1     Running   0          3s</span><br></pre></td></tr></table></figure>
+<p>登录到ceph-tools Pod</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">[root@kube01 rook]# kubectl exec -it rook-ceph-tools-544fb656d-tddrx bash -n rook-ceph</span><br><span class="line">bash: warning: setlocale: LC_CTYPE: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">bash: warning: setlocale: LC_COLLATE: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">bash: warning: setlocale: LC_MESSAGES: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">bash: warning: setlocale: LC_NUMERIC: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">bash: warning: setlocale: LC_TIME: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">[root@kube03 /]# ceph -s</span><br><span class="line">  cluster:</span><br><span class="line">    id:     f9609ec9-62c7-4462-a4f2-35c4137c25ef</span><br><span class="line">    health: HEALTH_OK</span><br><span class="line"></span><br><span class="line">  services:</span><br><span class="line">    mon: 3 daemons, quorum c,a,b</span><br><span class="line">    mgr: a(active)</span><br><span class="line">    osd: 3 osds: 3 up, 3 in</span><br><span class="line"></span><br><span class="line">  data:</span><br><span class="line">    pools:   0 pools, 0 pgs</span><br><span class="line">    objects: 0  objects, 0 B</span><br><span class="line">    usage:   3.0 GiB used, 57 GiB / 60 GiB avail</span><br><span class="line">    pgs:</span><br><span class="line"></span><br><span class="line">[root@kube03 /]# ceph osd tree</span><br><span class="line">ID CLASS WEIGHT  TYPE NAME       STATUS REWEIGHT PRI-AFF</span><br><span class="line">-1       0.05846 root default</span><br><span class="line">-7       0.01949     host kube01</span><br><span class="line"> 2   hdd 0.01949         osd.2       up  1.00000 1.00000</span><br><span class="line">-3       0.01949     host kube02</span><br><span class="line"> 0   hdd 0.01949         osd.0       up  1.00000 1.00000</span><br><span class="line">-5       0.01949     host kube03</span><br><span class="line"> 1   hdd 0.01949         osd.1       up  1.00000 1.00000</span><br></pre></td></tr></table></figure>
+<p>部署好的ceph集群并没有rgw服务，通过下面的方式可以添加rgw服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">[root@kube01 rook]# kubectl apply -f cluster/examples/kubernetes/ceph/object.yaml</span><br><span class="line">cephobjectstore.ceph.rook.io/my-store created</span><br><span class="line"></span><br><span class="line">[root@kube01 rook]# kubectl get pods -n rook-ceph</span><br><span class="line">NAME                                      READY   STATUS      RESTARTS   AGE</span><br><span class="line">rook-ceph-mgr-a-66db78887f-lmhcf          1/1     Running     0          11m</span><br><span class="line">rook-ceph-mon-a-b6556df54-t7cd4           1/1     Running     0          11m</span><br><span class="line">rook-ceph-mon-b-7f84c6d4b-nhjj6           1/1     Running     0          11m</span><br><span class="line">rook-ceph-mon-c-868c5b476b-ghfqs          1/1     Running     0          11m</span><br><span class="line">rook-ceph-osd-0-f986cc57d-6xclh           1/1     Running     0          6m</span><br><span class="line">rook-ceph-osd-1-765556c558-jwv2n          1/1     Running     0          5m40s</span><br><span class="line">rook-ceph-osd-2-766db888c7-j7z8f          1/1     Running     0          5m48s</span><br><span class="line">rook-ceph-osd-prepare-kube01-d2rrt        0/2     Completed   0          6m57s</span><br><span class="line">rook-ceph-osd-prepare-kube02-jxl6g        0/2     Completed   0          6m55s</span><br><span class="line">rook-ceph-osd-prepare-kube03-fz276        0/2     Completed   0          6m53s</span><br><span class="line">rook-ceph-rgw-my-store-5b68744bc6-pc7g7   1/1     Running     0          21s</span><br><span class="line">rook-ceph-tools-544fb656d-tddrx           1/1     Running     0          6m11s</span><br><span class="line"></span><br><span class="line">[root@kube01 rook]# kubectl exec -it rook-ceph-tools-544fb656d-tddrx bash -n rook-ceph</span><br><span class="line">bash: warning: setlocale: LC_CTYPE: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">bash: warning: setlocale: LC_COLLATE: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">bash: warning: setlocale: LC_MESSAGES: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">bash: warning: setlocale: LC_NUMERIC: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">bash: warning: setlocale: LC_TIME: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">[root@kube03 /]# ceph -s</span><br><span class="line">  cluster:</span><br><span class="line">    id:     f9609ec9-62c7-4462-a4f2-35c4137c25ef</span><br><span class="line">    health: HEALTH_OK</span><br><span class="line"></span><br><span class="line">  services:</span><br><span class="line">    mon: 3 daemons, quorum c,a,b</span><br><span class="line">    mgr: a(active)</span><br><span class="line">    osd: 3 osds: 3 up, 3 in</span><br><span class="line">    rgw: 1 daemon active</span><br><span class="line"></span><br><span class="line">  data:</span><br><span class="line">    pools:   6 pools, 600 pgs</span><br><span class="line">    objects: 201  objects, 3.7 KiB</span><br><span class="line">    usage:   3.0 GiB used, 57 GiB / 60 GiB avail</span><br><span class="line">    pgs:     600 active+clean</span><br></pre></td></tr></table></figure>
+<p>通过下面的方式可以把rgw服务以NodePort的方式对外提供服务</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@kube01 rook]# kubectl apply -f cluster/examples/kubernetes/ceph/rgw-external.yaml</span><br><span class="line">service/rook-ceph-rgw-my-store-external created</span><br><span class="line"> </span><br><span class="line">[root@kube01 rook]# kubectl get services -n rook-ceph</span><br><span class="line">NAME                              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)        AGE</span><br><span class="line">rook-ceph-mgr                     ClusterIP   172.30.117.80    &lt;none&gt;        9283/TCP       12m</span><br><span class="line">rook-ceph-mgr-dashboard           ClusterIP   172.30.225.42    &lt;none&gt;        8443/TCP       12m</span><br><span class="line">rook-ceph-mon-a                   ClusterIP   172.30.82.3      &lt;none&gt;        6790/TCP       13m</span><br><span class="line">rook-ceph-mon-b                   ClusterIP   172.30.122.28    &lt;none&gt;        6790/TCP       13m</span><br><span class="line">rook-ceph-mon-c                   ClusterIP   172.30.62.26     &lt;none&gt;        6790/TCP       13m</span><br><span class="line">rook-ceph-rgw-my-store            ClusterIP   172.30.107.175   &lt;none&gt;        80/TCP         2m47s</span><br><span class="line">rook-ceph-rgw-my-store-external   NodePort    172.30.131.185   &lt;none&gt;        80:32185/TCP   4m2s</span><br></pre></td></tr></table></figure>
+<p>下面的部署安装ceph mds </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br></pre></td><td class="code"><pre><span class="line">[root@kube01 rook]# kubectl apply -f cluster/examples/kubernetes/ceph/filesystem.yaml</span><br><span class="line">cephfilesystem.ceph.rook.io/myfs created</span><br><span class="line"></span><br><span class="line">[root@kube01 rook]# kubectl get pods -n rook-ceph</span><br><span class="line">NAME                                      READY   STATUS      RESTARTS   AGE</span><br><span class="line">rook-ceph-mds-myfs-a-6bbc59cbc8-fp5px     1/1     Running     0          11s</span><br><span class="line">rook-ceph-mds-myfs-b-658fc8fd66-5cd9g     1/1     Running     0          11s</span><br><span class="line">rook-ceph-mgr-a-66db78887f-lmhcf          1/1     Running     0          23m</span><br><span class="line">rook-ceph-mon-a-b6556df54-t7cd4           1/1     Running     0          24m</span><br><span class="line">rook-ceph-mon-b-7f84c6d4b-nhjj6           1/1     Running     0          24m</span><br><span class="line">rook-ceph-mon-c-868c5b476b-ghfqs          1/1     Running     0          23m</span><br><span class="line">rook-ceph-osd-0-f986cc57d-6xclh           1/1     Running     0          18m</span><br><span class="line">rook-ceph-osd-1-765556c558-jwv2n          1/1     Running     0          17m</span><br><span class="line">rook-ceph-osd-2-766db888c7-j7z8f          1/1     Running     0          18m</span><br><span class="line">rook-ceph-osd-prepare-kube01-d2rrt        0/2     Completed   0          19m</span><br><span class="line">rook-ceph-osd-prepare-kube02-jxl6g        0/2     Completed   0          19m</span><br><span class="line">rook-ceph-osd-prepare-kube03-fz276        0/2     Completed   0          19m</span><br><span class="line">rook-ceph-rgw-my-store-5b68744bc6-pc7g7   1/1     Running     0          12m</span><br><span class="line">rook-ceph-tools-544fb656d-tddrx           1/1     Running     0          18m</span><br><span class="line"></span><br><span class="line">[root@kube01 rook]# kubectl exec -it rook-ceph-tools-544fb656d-tddrx bash -n rook-ceph</span><br><span class="line">bash: warning: setlocale: LC_CTYPE: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">bash: warning: setlocale: LC_COLLATE: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">bash: warning: setlocale: LC_MESSAGES: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">bash: warning: setlocale: LC_NUMERIC: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">bash: warning: setlocale: LC_TIME: cannot change locale (en_US.UTF-8): No such file or directory</span><br><span class="line">[root@kube03 /]# ceph -s</span><br><span class="line">  cluster:</span><br><span class="line">    id:     f9609ec9-62c7-4462-a4f2-35c4137c25ef</span><br><span class="line">    health: HEALTH_OK</span><br><span class="line"></span><br><span class="line">  services:</span><br><span class="line">    mon: 3 daemons, quorum c,a,b</span><br><span class="line">    mgr: a(active)</span><br><span class="line">    mds: myfs-1/1/1 up  &#123;0=myfs-b=up:active&#125;, 1 up:standby-replay</span><br><span class="line">    osd: 3 osds: 3 up, 3 in</span><br><span class="line">    rgw: 1 daemon active</span><br><span class="line"></span><br><span class="line">  data:</span><br><span class="line">    pools:   8 pools, 800 pgs</span><br><span class="line">    objects: 224  objects, 5.9 KiB</span><br><span class="line">    usage:   3.0 GiB used, 57 GiB / 60 GiB avail</span><br><span class="line">    pgs:     800 active+clean</span><br><span class="line"></span><br><span class="line">  io:</span><br><span class="line">    client:   852 B/s rd, 1 op/s rd, 0 op/s wr</span><br></pre></td></tr></table></figure>
+<p>cluster/examples/kubernetes/ceph/ 目录下还有其他yaml文件，可以对ceph集群进行其他操作，比如启用mgr dashboar，安装prometheus监控等</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">-rwxr-xr-x 1 root root  8139 Mar 15 15:20 cluster.yaml</span><br><span class="line">-rw-r--r-- 1 root root   363 Mar 15 14:47 dashboard-external-https.yaml</span><br><span class="line">-rw-r--r-- 1 root root   362 Mar 15 14:47 dashboard-external-http.yaml</span><br><span class="line">-rw-r--r-- 1 root root  1487 Mar 15 14:47 ec-filesystem.yaml</span><br><span class="line">-rw-r--r-- 1 root root  1538 Mar 15 14:47 ec-storageclass.yaml</span><br><span class="line">-rw-r--r-- 1 root root  1375 Mar 15 14:47 filesystem.yaml</span><br><span class="line">-rw-r--r-- 1 root root  1923 Mar 15 14:48 kube-registry.yaml</span><br><span class="line">drwxr-xr-x 2 root root    85 Mar 15 16:07 monitoring</span><br><span class="line">-rw-r--r-- 1 root root   160 Mar 15 14:47 object-user.yaml</span><br><span class="line">-rw-r--r-- 1 root root  1813 Mar 15 14:47 object.yaml</span><br><span class="line">-rwxr-xr-x 1 root root 12690 Mar 15 14:48 operator.yaml</span><br><span class="line">-rw-r--r-- 1 root root   742 Mar 15 14:47 pool.yaml</span><br><span class="line">-rw-r--r-- 1 root root   410 Mar 15 14:47 rgw-external.yaml</span><br><span class="line">-rw-r--r-- 1 root root  1216 Mar 15 14:47 scc.yaml</span><br><span class="line">-rw-r--r-- 1 root root   991 Mar 15 14:47 storageclass.yaml</span><br><span class="line">-rw-r--r-- 1 root root  1544 Mar 15 14:48 toolbox.yaml</span><br><span class="line">-rw-r--r-- 1 root root  6492 Mar 15 14:47 upgrade-from-v0.8-create.yaml</span><br><span class="line">-rw-r--r-- 1 root root   874 Mar 15 14:47 upgrade-from-v0.8-replace.yaml</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="http://www.yangguanjun.com/2018/12/22/rook-ceph-practice-part1/" target="_blank" rel="noopener">http://www.yangguanjun.com/2018/12/22/rook-ceph-practice-part1/</a></li>
+<li><a href="http://www.yangguanjun.com/2018/12/28/rook-ceph-practice-part2/" target="_blank" rel="noopener">http://www.yangguanjun.com/2018/12/28/rook-ceph-practice-part2/</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ceph/" rel="tag"># ceph</a>
+          
+            <a href="/tags/k8s/" rel="tag"># k8s</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/09/rgw-multi-site/" rel="next" title="Ceph RGW multi site 配置">
+                <i class="fa fa-chevron-left"></i> Ceph RGW multi site 配置
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/13/rgw-with-ec/" rel="prev" title="Ceph对象存储使用纠删码存储池">
+                Ceph对象存储使用纠删码存储池 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/avatar.jpeg"
+                alt="yanyx" />
+            
+              <p class="site-author-name" itemprop="name">yanyx</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/yanyixing" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:yixingyan@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Rook部署"><span class="nav-number">2.</span> <span class="nav-text">Rook部署</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">3.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yanyx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'KL7E0KVEe3TAS3dDvTv9DFyx-gzGzoHsz',
+        appKey: 't4Hm10PJPtlNVNnzuPrgpeP7',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("KL7E0KVEe3TAS3dDvTv9DFyx-gzGzoHsz", "t4Hm10PJPtlNVNnzuPrgpeP7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

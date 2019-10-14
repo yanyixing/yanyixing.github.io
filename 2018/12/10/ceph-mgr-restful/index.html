@@ -1,0 +1,891 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+<meta name="google-site-verification" content="0XQmZEr9kzc4dxL8nE7ZP6nQqb32vqBya9Or3ToSS-I" />
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-icon-180x180.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="ceph," />
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="yanyx's blog" type="application/atom+xml" />
+
+
+
+
+
+
+<meta name="description" content="概述本文主要介绍如何开启ceph mgr restful插件，并通过这个restful接口获取ceph的数据。 环境信息如下: 12345678910111213141516171819202122[root@ceph11 ~]# ceph -s  cluster:    id:     f8b6141c-5039-464d-be1e-61816208a006    health: HEALTH_">
+<meta name="keywords" content="ceph">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ceph mgr启动restful插件">
+<meta property="og:url" content="https://yanyixing.github.io/2018/12/10/ceph-mgr-restful/index.html">
+<meta property="og:site_name" content="yanyx&#39;s blog">
+<meta property="og:description" content="概述本文主要介绍如何开启ceph mgr restful插件，并通过这个restful接口获取ceph的数据。 环境信息如下: 12345678910111213141516171819202122[root@ceph11 ~]# ceph -s  cluster:    id:     f8b6141c-5039-464d-be1e-61816208a006    health: HEALTH_">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2019-10-14T05:50:12.016Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Ceph mgr启动restful插件">
+<meta name="twitter:description" content="概述本文主要介绍如何开启ceph mgr restful插件，并通过这个restful接口获取ceph的数据。 环境信息如下: 12345678910111213141516171819202122[root@ceph11 ~]# ceph -s  cluster:    id:     f8b6141c-5039-464d-be1e-61816208a006    health: HEALTH_">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://yanyixing.github.io/2018/12/10/ceph-mgr-restful/"/>
+
+
+
+
+
+  <title>Ceph mgr启动restful插件 | yanyx's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">yanyx's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://yanyixing.github.io/2018/12/10/ceph-mgr-restful/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yanyx">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="yanyx's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Ceph mgr启动restful插件</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-10T17:03:33+00:00">
+                2018-12-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2018/12/10/ceph-mgr-restful/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count valine-comment-count" data-xid="/2018/12/10/ceph-mgr-restful/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2018/12/10/ceph-mgr-restful/" class="leancloud_visitors" data-flag-title="Ceph mgr启动restful插件">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>本文主要介绍如何开启ceph mgr restful插件，并通过这个restful接口获取ceph的数据。</p>
+<p>环境信息如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">[root@ceph11 ~]# ceph -s</span><br><span class="line">  cluster:</span><br><span class="line">    id:     f8b6141c-5039-464d-be1e-61816208a006</span><br><span class="line">    health: HEALTH_OK</span><br><span class="line"></span><br><span class="line">  services:</span><br><span class="line">    mon:     3 daemons, quorum ceph12,ceph13,ceph14</span><br><span class="line">    mgr:     ceph14(active), standbys: ceph12, ceph13</span><br><span class="line">    mds:     cephfs-1/1/1 up  &#123;0=umstor12=up:active&#125;</span><br><span class="line">    osd:     7 osds: 7 up, 7 in</span><br><span class="line">    rgw:     3 daemons active</span><br><span class="line">    rgw-nfs: 3 daemons active</span><br><span class="line"></span><br><span class="line">  data:</span><br><span class="line">    pools:   9 pools, 762 pgs</span><br><span class="line">    objects: 8835 objects, 5352 MB</span><br><span class="line">    usage:   24008 MB used, 6496 GB / 6519 GB avail</span><br><span class="line">    pgs:     762 active+clean</span><br><span class="line"></span><br><span class="line">  io:</span><br><span class="line">    client:   127 B/s wr, 0 op/s rd, 1 op/s wr</span><br><span class="line">    recovery: 71 B/s, 0 objects/s</span><br></pre></td></tr></table></figure>
+<h1 id="启动插件"><a href="#启动插件" class="headerlink" title="启动插件"></a>启动插件</h1><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ceph mgr module enable restful</span><br></pre></td></tr></table></figure>
+<p>发现restful服务并没有启动，8003端口没有监听，要启动restful服务，还需要配置SSL cetificate(证书)。</p>
+<p>下面的命令生产自签名证书：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ceph restful create-self-signed-cert</span><br></pre></td></tr></table></figure>
+<p>这个时候可以查看在active的mgr节点(ceph14)上，restful服务已经启动</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@ceph14 ~]# netstat -nltp | grep 8003</span><br><span class="line">tcp6       0      0 :::8003                 :::*                    LISTEN      3551433/ceph-mgr</span><br></pre></td></tr></table></figure>
+<p>默认情况下，当前active的ceph-mgr daemon将绑定主机上任何可用的IPv4或IPv6地址的8003端口</p>
+<h2 id="指定IP和PORT"><a href="#指定IP和PORT" class="headerlink" title="指定IP和PORT"></a>指定IP和PORT</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ceph config-key set mgr/restful/server_addr $IP</span><br><span class="line">ceph config-key set mgr/restful/server_port $PORT</span><br></pre></td></tr></table></figure>
+<p>如果没有配置IP，则restful将会监听全部ip<br>如果没有配置Port，则restful将会监听在8003端口</p>
+<p>上面的配置是针对全部mgr的，如果要针对某个mgr的配置，需要在配置中指定相应的mgr的hostname</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ceph config-key set mgr/restful/$name/server_addr $IP</span><br><span class="line">ceph config-key set mgr/restful/$name/server_port $PORT</span><br></pre></td></tr></table></figure>
+<h2 id="创建用户"><a href="#创建用户" class="headerlink" title="创建用户"></a>创建用户</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@ceph14 ~]# ceph restful create-key admin01</span><br><span class="line">144276ee-1fdc-48ca-a358-0fb59bbb689f</span><br></pre></td></tr></table></figure>
+<p>后面的访问restful接口需要用到这个用户和密码</p>
+<h2 id="验证"><a href="#验证" class="headerlink" title="验证"></a>验证</h2><p>启动restful插件后，可以通过浏览器进行访问并验证。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">https://192.168.180.138:8003/</span><br><span class="line"></span><br><span class="line">&#123;</span><br><span class="line">    &quot;api_version&quot;: 1,</span><br><span class="line">    &quot;auth&quot;: &quot;Use \&quot;ceph restful create-key &lt;key&gt;\&quot; to create a key pair, pass it as HTTP Basic auth to authenticate&quot;,</span><br><span class="line">    &quot;doc&quot;: &quot;See /doc endpoint&quot;,</span><br><span class="line">    &quot;info&quot;: &quot;Ceph Manager RESTful API server&quot;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>获取全部存储池的信息  </p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br><span class="line">319</span><br><span class="line">320</span><br><span class="line">321</span><br><span class="line">322</span><br><span class="line">323</span><br><span class="line">324</span><br><span class="line">325</span><br><span class="line">326</span><br><span class="line">327</span><br><span class="line">328</span><br><span class="line">329</span><br><span class="line">330</span><br><span class="line">331</span><br><span class="line">332</span><br><span class="line">333</span><br><span class="line">334</span><br><span class="line">335</span><br><span class="line">336</span><br><span class="line">337</span><br><span class="line">338</span><br><span class="line">339</span><br><span class="line">340</span><br><span class="line">341</span><br><span class="line">342</span><br><span class="line">343</span><br><span class="line">344</span><br><span class="line">345</span><br><span class="line">346</span><br><span class="line">347</span><br><span class="line">348</span><br><span class="line">349</span><br><span class="line">350</span><br><span class="line">351</span><br><span class="line">352</span><br><span class="line">353</span><br><span class="line">354</span><br><span class="line">355</span><br><span class="line">356</span><br><span class="line">357</span><br><span class="line">358</span><br><span class="line">359</span><br><span class="line">360</span><br><span class="line">361</span><br><span class="line">362</span><br><span class="line">363</span><br><span class="line">364</span><br><span class="line">365</span><br><span class="line">366</span><br><span class="line">367</span><br><span class="line">368</span><br><span class="line">369</span><br><span class="line">370</span><br><span class="line">371</span><br><span class="line">372</span><br><span class="line">373</span><br><span class="line">374</span><br><span class="line">375</span><br><span class="line">376</span><br><span class="line">377</span><br><span class="line">378</span><br><span class="line">379</span><br><span class="line">380</span><br><span class="line">381</span><br><span class="line">382</span><br><span class="line">383</span><br><span class="line">384</span><br><span class="line">385</span><br><span class="line">386</span><br><span class="line">387</span><br><span class="line">388</span><br><span class="line">389</span><br><span class="line">390</span><br><span class="line">391</span><br><span class="line">392</span><br><span class="line">393</span><br><span class="line">394</span><br><span class="line">395</span><br><span class="line">396</span><br><span class="line">397</span><br><span class="line">398</span><br><span class="line">399</span><br><span class="line">400</span><br><span class="line">401</span><br><span class="line">402</span><br><span class="line">403</span><br><span class="line">404</span><br><span class="line">405</span><br><span class="line">406</span><br><span class="line">407</span><br><span class="line">408</span><br><span class="line">409</span><br><span class="line">410</span><br><span class="line">411</span><br><span class="line">412</span><br><span class="line">413</span><br><span class="line">414</span><br><span class="line">415</span><br><span class="line">416</span><br><span class="line">417</span><br><span class="line">418</span><br><span class="line">419</span><br><span class="line">420</span><br><span class="line">421</span><br><span class="line">422</span><br><span class="line">423</span><br><span class="line">424</span><br><span class="line">425</span><br><span class="line">426</span><br><span class="line">427</span><br><span class="line">428</span><br><span class="line">429</span><br><span class="line">430</span><br><span class="line">431</span><br><span class="line">432</span><br><span class="line">433</span><br><span class="line">434</span><br><span class="line">435</span><br><span class="line">436</span><br><span class="line">437</span><br><span class="line">438</span><br><span class="line">439</span><br><span class="line">440</span><br><span class="line">441</span><br><span class="line">442</span><br><span class="line">443</span><br><span class="line">444</span><br><span class="line">445</span><br><span class="line">446</span><br><span class="line">447</span><br><span class="line">448</span><br><span class="line">449</span><br><span class="line">450</span><br><span class="line">451</span><br><span class="line">452</span><br><span class="line">453</span><br><span class="line">454</span><br><span class="line">455</span><br><span class="line">456</span><br><span class="line">457</span><br><span class="line">458</span><br><span class="line">459</span><br><span class="line">460</span><br><span class="line">461</span><br><span class="line">462</span><br><span class="line">463</span><br><span class="line">464</span><br><span class="line">465</span><br><span class="line">466</span><br><span class="line">467</span><br><span class="line">468</span><br><span class="line">469</span><br><span class="line">470</span><br><span class="line">471</span><br><span class="line">472</span><br><span class="line">473</span><br><span class="line">474</span><br><span class="line">475</span><br><span class="line">476</span><br><span class="line">477</span><br><span class="line">478</span><br><span class="line">479</span><br><span class="line">480</span><br><span class="line">481</span><br><span class="line">482</span><br><span class="line">483</span><br><span class="line">484</span><br><span class="line">485</span><br><span class="line">486</span><br><span class="line">487</span><br><span class="line">488</span><br><span class="line">489</span><br><span class="line">490</span><br><span class="line">491</span><br><span class="line">492</span><br><span class="line">493</span><br><span class="line">494</span><br><span class="line">495</span><br><span class="line">496</span><br><span class="line">497</span><br><span class="line">498</span><br><span class="line">499</span><br><span class="line">500</span><br><span class="line">501</span><br><span class="line">502</span><br><span class="line">503</span><br><span class="line">504</span><br><span class="line">505</span><br><span class="line">506</span><br><span class="line">507</span><br><span class="line">508</span><br></pre></td><td class="code"><pre><span class="line">https://192.168.180.138:8003/pool</span><br><span class="line"></span><br><span class="line">[</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;application_metadata&quot;: &#123;</span><br><span class="line">            &quot;rgw&quot;: &#123;&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;auid&quot;: 0,</span><br><span class="line">        &quot;cache_min_evict_age&quot;: 0,</span><br><span class="line">        &quot;cache_min_flush_age&quot;: 0,</span><br><span class="line">        &quot;cache_mode&quot;: &quot;none&quot;,</span><br><span class="line">        &quot;cache_target_dirty_high_ratio_micro&quot;: 600000,</span><br><span class="line">        &quot;cache_target_dirty_ratio_micro&quot;: 400000,</span><br><span class="line">        &quot;cache_target_full_ratio_micro&quot;: 800000,</span><br><span class="line">        &quot;crash_replay_interval&quot;: 0,</span><br><span class="line">        &quot;crush_rule&quot;: 1,</span><br><span class="line">        &quot;erasure_code_profile&quot;: &quot;&quot;,</span><br><span class="line">        &quot;expected_num_objects&quot;: 0,</span><br><span class="line">        &quot;fast_read&quot;: false,</span><br><span class="line">        &quot;flags&quot;: 1,</span><br><span class="line">        &quot;flags_names&quot;: &quot;hashpspool&quot;,</span><br><span class="line">        &quot;grade_table&quot;: [],</span><br><span class="line">        &quot;hit_set_count&quot;: 0,</span><br><span class="line">        &quot;hit_set_grade_decay_rate&quot;: 0,</span><br><span class="line">        &quot;hit_set_params&quot;: &#123;</span><br><span class="line">            &quot;type&quot;: &quot;none&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;hit_set_period&quot;: 0,</span><br><span class="line">        &quot;hit_set_search_last_n&quot;: 0,</span><br><span class="line">        &quot;last_change&quot;: &quot;61&quot;,</span><br><span class="line">        &quot;last_force_op_resend&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;last_force_op_resend_preluminous&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;min_read_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;min_size&quot;: 2,</span><br><span class="line">        &quot;min_write_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;object_hash&quot;: 2,</span><br><span class="line">        &quot;options&quot;: &#123;&#125;,</span><br><span class="line">        &quot;pg_num&quot;: 8,</span><br><span class="line">        &quot;pgp_num&quot;: 8,</span><br><span class="line">        &quot;pool&quot;: 1,</span><br><span class="line">        &quot;pool_name&quot;: &quot;.rgw.root&quot;,</span><br><span class="line">        &quot;pool_snaps&quot;: [],</span><br><span class="line">        &quot;quota_max_bytes&quot;: 0,</span><br><span class="line">        &quot;quota_max_objects&quot;: 0,</span><br><span class="line">        &quot;read_tier&quot;: -1,</span><br><span class="line">        &quot;removed_snaps&quot;: &quot;[]&quot;,</span><br><span class="line">        &quot;size&quot;: 3,</span><br><span class="line">        &quot;snap_epoch&quot;: 0,</span><br><span class="line">        &quot;snap_mode&quot;: &quot;selfmanaged&quot;,</span><br><span class="line">        &quot;snap_seq&quot;: 0,</span><br><span class="line">        &quot;stripe_width&quot;: 0,</span><br><span class="line">        &quot;target_max_bytes&quot;: 0,</span><br><span class="line">        &quot;target_max_objects&quot;: 0,</span><br><span class="line">        &quot;tier_of&quot;: -1,</span><br><span class="line">        &quot;tiers&quot;: [],</span><br><span class="line">        &quot;type&quot;: 1,</span><br><span class="line">        &quot;use_gmt_hitset&quot;: false,</span><br><span class="line">        &quot;write_tier&quot;: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;application_metadata&quot;: &#123;</span><br><span class="line">            &quot;rgw&quot;: &#123;&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;auid&quot;: -1,</span><br><span class="line">        &quot;cache_min_evict_age&quot;: 0,</span><br><span class="line">        &quot;cache_min_flush_age&quot;: 0,</span><br><span class="line">        &quot;cache_mode&quot;: &quot;none&quot;,</span><br><span class="line">        &quot;cache_target_dirty_high_ratio_micro&quot;: 600000,</span><br><span class="line">        &quot;cache_target_dirty_ratio_micro&quot;: 400000,</span><br><span class="line">        &quot;cache_target_full_ratio_micro&quot;: 800000,</span><br><span class="line">        &quot;crash_replay_interval&quot;: 0,</span><br><span class="line">        &quot;crush_rule&quot;: 1,</span><br><span class="line">        &quot;erasure_code_profile&quot;: &quot;&quot;,</span><br><span class="line">        &quot;expected_num_objects&quot;: 0,</span><br><span class="line">        &quot;fast_read&quot;: false,</span><br><span class="line">        &quot;flags&quot;: 1,</span><br><span class="line">        &quot;flags_names&quot;: &quot;hashpspool&quot;,</span><br><span class="line">        &quot;grade_table&quot;: [],</span><br><span class="line">        &quot;hit_set_count&quot;: 0,</span><br><span class="line">        &quot;hit_set_grade_decay_rate&quot;: 0,</span><br><span class="line">        &quot;hit_set_params&quot;: &#123;</span><br><span class="line">            &quot;type&quot;: &quot;none&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;hit_set_period&quot;: 0,</span><br><span class="line">        &quot;hit_set_search_last_n&quot;: 0,</span><br><span class="line">        &quot;last_change&quot;: &quot;64&quot;,</span><br><span class="line">        &quot;last_force_op_resend&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;last_force_op_resend_preluminous&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;min_read_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;min_size&quot;: 2,</span><br><span class="line">        &quot;min_write_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;object_hash&quot;: 2,</span><br><span class="line">        &quot;options&quot;: &#123;&#125;,</span><br><span class="line">        &quot;pg_num&quot;: 8,</span><br><span class="line">        &quot;pgp_num&quot;: 8,</span><br><span class="line">        &quot;pool&quot;: 2,</span><br><span class="line">        &quot;pool_name&quot;: &quot;default.rgw.control&quot;,</span><br><span class="line">        &quot;pool_snaps&quot;: [],</span><br><span class="line">        &quot;quota_max_bytes&quot;: 0,</span><br><span class="line">        &quot;quota_max_objects&quot;: 0,</span><br><span class="line">        &quot;read_tier&quot;: -1,</span><br><span class="line">        &quot;removed_snaps&quot;: &quot;[]&quot;,</span><br><span class="line">        &quot;size&quot;: 3,</span><br><span class="line">        &quot;snap_epoch&quot;: 0,</span><br><span class="line">        &quot;snap_mode&quot;: &quot;selfmanaged&quot;,</span><br><span class="line">        &quot;snap_seq&quot;: 0,</span><br><span class="line">        &quot;stripe_width&quot;: 0,</span><br><span class="line">        &quot;target_max_bytes&quot;: 0,</span><br><span class="line">        &quot;target_max_objects&quot;: 0,</span><br><span class="line">        &quot;tier_of&quot;: -1,</span><br><span class="line">        &quot;tiers&quot;: [],</span><br><span class="line">        &quot;type&quot;: 1,</span><br><span class="line">        &quot;use_gmt_hitset&quot;: true,</span><br><span class="line">        &quot;write_tier&quot;: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;application_metadata&quot;: &#123;</span><br><span class="line">            &quot;rgw&quot;: &#123;&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;auid&quot;: -1,</span><br><span class="line">        &quot;cache_min_evict_age&quot;: 0,</span><br><span class="line">        &quot;cache_min_flush_age&quot;: 0,</span><br><span class="line">        &quot;cache_mode&quot;: &quot;none&quot;,</span><br><span class="line">        &quot;cache_target_dirty_high_ratio_micro&quot;: 600000,</span><br><span class="line">        &quot;cache_target_dirty_ratio_micro&quot;: 400000,</span><br><span class="line">        &quot;cache_target_full_ratio_micro&quot;: 800000,</span><br><span class="line">        &quot;crash_replay_interval&quot;: 0,</span><br><span class="line">        &quot;crush_rule&quot;: 1,</span><br><span class="line">        &quot;erasure_code_profile&quot;: &quot;&quot;,</span><br><span class="line">        &quot;expected_num_objects&quot;: 0,</span><br><span class="line">        &quot;fast_read&quot;: false,</span><br><span class="line">        &quot;flags&quot;: 1,</span><br><span class="line">        &quot;flags_names&quot;: &quot;hashpspool&quot;,</span><br><span class="line">        &quot;grade_table&quot;: [],</span><br><span class="line">        &quot;hit_set_count&quot;: 0,</span><br><span class="line">        &quot;hit_set_grade_decay_rate&quot;: 0,</span><br><span class="line">        &quot;hit_set_params&quot;: &#123;</span><br><span class="line">            &quot;type&quot;: &quot;none&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;hit_set_period&quot;: 0,</span><br><span class="line">        &quot;hit_set_search_last_n&quot;: 0,</span><br><span class="line">        &quot;last_change&quot;: &quot;67&quot;,</span><br><span class="line">        &quot;last_force_op_resend&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;last_force_op_resend_preluminous&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;min_read_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;min_size&quot;: 2,</span><br><span class="line">        &quot;min_write_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;object_hash&quot;: 2,</span><br><span class="line">        &quot;options&quot;: &#123;&#125;,</span><br><span class="line">        &quot;pg_num&quot;: 8,</span><br><span class="line">        &quot;pgp_num&quot;: 8,</span><br><span class="line">        &quot;pool&quot;: 3,</span><br><span class="line">        &quot;pool_name&quot;: &quot;default.rgw.meta&quot;,</span><br><span class="line">        &quot;pool_snaps&quot;: [],</span><br><span class="line">        &quot;quota_max_bytes&quot;: 0,</span><br><span class="line">        &quot;quota_max_objects&quot;: 0,</span><br><span class="line">        &quot;read_tier&quot;: -1,</span><br><span class="line">        &quot;removed_snaps&quot;: &quot;[]&quot;,</span><br><span class="line">        &quot;size&quot;: 3,</span><br><span class="line">        &quot;snap_epoch&quot;: 0,</span><br><span class="line">        &quot;snap_mode&quot;: &quot;selfmanaged&quot;,</span><br><span class="line">        &quot;snap_seq&quot;: 0,</span><br><span class="line">        &quot;stripe_width&quot;: 0,</span><br><span class="line">        &quot;target_max_bytes&quot;: 0,</span><br><span class="line">        &quot;target_max_objects&quot;: 0,</span><br><span class="line">        &quot;tier_of&quot;: -1,</span><br><span class="line">        &quot;tiers&quot;: [],</span><br><span class="line">        &quot;type&quot;: 1,</span><br><span class="line">        &quot;use_gmt_hitset&quot;: true,</span><br><span class="line">        &quot;write_tier&quot;: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;application_metadata&quot;: &#123;</span><br><span class="line">            &quot;rgw&quot;: &#123;&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;auid&quot;: -1,</span><br><span class="line">        &quot;cache_min_evict_age&quot;: 0,</span><br><span class="line">        &quot;cache_min_flush_age&quot;: 0,</span><br><span class="line">        &quot;cache_mode&quot;: &quot;none&quot;,</span><br><span class="line">        &quot;cache_target_dirty_high_ratio_micro&quot;: 600000,</span><br><span class="line">        &quot;cache_target_dirty_ratio_micro&quot;: 400000,</span><br><span class="line">        &quot;cache_target_full_ratio_micro&quot;: 800000,</span><br><span class="line">        &quot;crash_replay_interval&quot;: 0,</span><br><span class="line">        &quot;crush_rule&quot;: 1,</span><br><span class="line">        &quot;erasure_code_profile&quot;: &quot;&quot;,</span><br><span class="line">        &quot;expected_num_objects&quot;: 0,</span><br><span class="line">        &quot;fast_read&quot;: false,</span><br><span class="line">        &quot;flags&quot;: 1,</span><br><span class="line">        &quot;flags_names&quot;: &quot;hashpspool&quot;,</span><br><span class="line">        &quot;grade_table&quot;: [],</span><br><span class="line">        &quot;hit_set_count&quot;: 0,</span><br><span class="line">        &quot;hit_set_grade_decay_rate&quot;: 0,</span><br><span class="line">        &quot;hit_set_params&quot;: &#123;</span><br><span class="line">            &quot;type&quot;: &quot;none&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;hit_set_period&quot;: 0,</span><br><span class="line">        &quot;hit_set_search_last_n&quot;: 0,</span><br><span class="line">        &quot;last_change&quot;: &quot;70&quot;,</span><br><span class="line">        &quot;last_force_op_resend&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;last_force_op_resend_preluminous&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;min_read_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;min_size&quot;: 2,</span><br><span class="line">        &quot;min_write_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;object_hash&quot;: 2,</span><br><span class="line">        &quot;options&quot;: &#123;&#125;,</span><br><span class="line">        &quot;pg_num&quot;: 8,</span><br><span class="line">        &quot;pgp_num&quot;: 8,</span><br><span class="line">        &quot;pool&quot;: 4,</span><br><span class="line">        &quot;pool_name&quot;: &quot;default.rgw.log&quot;,</span><br><span class="line">        &quot;pool_snaps&quot;: [],</span><br><span class="line">        &quot;quota_max_bytes&quot;: 0,</span><br><span class="line">        &quot;quota_max_objects&quot;: 0,</span><br><span class="line">        &quot;read_tier&quot;: -1,</span><br><span class="line">        &quot;removed_snaps&quot;: &quot;[]&quot;,</span><br><span class="line">        &quot;size&quot;: 3,</span><br><span class="line">        &quot;snap_epoch&quot;: 0,</span><br><span class="line">        &quot;snap_mode&quot;: &quot;selfmanaged&quot;,</span><br><span class="line">        &quot;snap_seq&quot;: 0,</span><br><span class="line">        &quot;stripe_width&quot;: 0,</span><br><span class="line">        &quot;target_max_bytes&quot;: 0,</span><br><span class="line">        &quot;target_max_objects&quot;: 0,</span><br><span class="line">        &quot;tier_of&quot;: -1,</span><br><span class="line">        &quot;tiers&quot;: [],</span><br><span class="line">        &quot;type&quot;: 1,</span><br><span class="line">        &quot;use_gmt_hitset&quot;: true,</span><br><span class="line">        &quot;write_tier&quot;: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;application_metadata&quot;: &#123;</span><br><span class="line">            &quot;rgw&quot;: &#123;&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;auid&quot;: 0,</span><br><span class="line">        &quot;cache_min_evict_age&quot;: 0,</span><br><span class="line">        &quot;cache_min_flush_age&quot;: 0,</span><br><span class="line">        &quot;cache_mode&quot;: &quot;none&quot;,</span><br><span class="line">        &quot;cache_target_dirty_high_ratio_micro&quot;: 600000,</span><br><span class="line">        &quot;cache_target_dirty_ratio_micro&quot;: 400000,</span><br><span class="line">        &quot;cache_target_full_ratio_micro&quot;: 800000,</span><br><span class="line">        &quot;crash_replay_interval&quot;: 0,</span><br><span class="line">        &quot;crush_rule&quot;: 1,</span><br><span class="line">        &quot;erasure_code_profile&quot;: &quot;rule_rgw&quot;,</span><br><span class="line">        &quot;expected_num_objects&quot;: 0,</span><br><span class="line">        &quot;fast_read&quot;: false,</span><br><span class="line">        &quot;flags&quot;: 1,</span><br><span class="line">        &quot;flags_names&quot;: &quot;hashpspool&quot;,</span><br><span class="line">        &quot;grade_table&quot;: [],</span><br><span class="line">        &quot;hit_set_count&quot;: 0,</span><br><span class="line">        &quot;hit_set_grade_decay_rate&quot;: 0,</span><br><span class="line">        &quot;hit_set_params&quot;: &#123;</span><br><span class="line">            &quot;type&quot;: &quot;none&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;hit_set_period&quot;: 0,</span><br><span class="line">        &quot;hit_set_search_last_n&quot;: 0,</span><br><span class="line">        &quot;last_change&quot;: &quot;57&quot;,</span><br><span class="line">        &quot;last_force_op_resend&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;last_force_op_resend_preluminous&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;min_read_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;min_size&quot;: 2,</span><br><span class="line">        &quot;min_write_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;object_hash&quot;: 2,</span><br><span class="line">        &quot;options&quot;: &#123;&#125;,</span><br><span class="line">        &quot;pg_num&quot;: 16,</span><br><span class="line">        &quot;pgp_num&quot;: 16,</span><br><span class="line">        &quot;pool&quot;: 5,</span><br><span class="line">        &quot;pool_name&quot;: &quot;default.rgw.buckets.index&quot;,</span><br><span class="line">        &quot;pool_snaps&quot;: [],</span><br><span class="line">        &quot;quota_max_bytes&quot;: 0,</span><br><span class="line">        &quot;quota_max_objects&quot;: 0,</span><br><span class="line">        &quot;read_tier&quot;: -1,</span><br><span class="line">        &quot;removed_snaps&quot;: &quot;[]&quot;,</span><br><span class="line">        &quot;size&quot;: 3,</span><br><span class="line">        &quot;snap_epoch&quot;: 0,</span><br><span class="line">        &quot;snap_mode&quot;: &quot;selfmanaged&quot;,</span><br><span class="line">        &quot;snap_seq&quot;: 0,</span><br><span class="line">        &quot;stripe_width&quot;: 0,</span><br><span class="line">        &quot;target_max_bytes&quot;: 0,</span><br><span class="line">        &quot;target_max_objects&quot;: 0,</span><br><span class="line">        &quot;tier_of&quot;: -1,</span><br><span class="line">        &quot;tiers&quot;: [],</span><br><span class="line">        &quot;type&quot;: 1,</span><br><span class="line">        &quot;use_gmt_hitset&quot;: true,</span><br><span class="line">        &quot;write_tier&quot;: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;application_metadata&quot;: &#123;</span><br><span class="line">            &quot;rgw&quot;: &#123;&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;auid&quot;: 0,</span><br><span class="line">        &quot;cache_min_evict_age&quot;: 0,</span><br><span class="line">        &quot;cache_min_flush_age&quot;: 0,</span><br><span class="line">        &quot;cache_mode&quot;: &quot;none&quot;,</span><br><span class="line">        &quot;cache_target_dirty_high_ratio_micro&quot;: 600000,</span><br><span class="line">        &quot;cache_target_dirty_ratio_micro&quot;: 400000,</span><br><span class="line">        &quot;cache_target_full_ratio_micro&quot;: 800000,</span><br><span class="line">        &quot;crash_replay_interval&quot;: 0,</span><br><span class="line">        &quot;crush_rule&quot;: 1,</span><br><span class="line">        &quot;erasure_code_profile&quot;: &quot;rule_rgw&quot;,</span><br><span class="line">        &quot;expected_num_objects&quot;: 0,</span><br><span class="line">        &quot;fast_read&quot;: false,</span><br><span class="line">        &quot;flags&quot;: 1,</span><br><span class="line">        &quot;flags_names&quot;: &quot;hashpspool&quot;,</span><br><span class="line">        &quot;grade_table&quot;: [],</span><br><span class="line">        &quot;hit_set_count&quot;: 0,</span><br><span class="line">        &quot;hit_set_grade_decay_rate&quot;: 0,</span><br><span class="line">        &quot;hit_set_params&quot;: &#123;</span><br><span class="line">            &quot;type&quot;: &quot;none&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;hit_set_period&quot;: 0,</span><br><span class="line">        &quot;hit_set_search_last_n&quot;: 0,</span><br><span class="line">        &quot;last_change&quot;: &quot;790&quot;,</span><br><span class="line">        &quot;last_force_op_resend&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;last_force_op_resend_preluminous&quot;: &quot;788&quot;,</span><br><span class="line">        &quot;min_read_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;min_size&quot;: 2,</span><br><span class="line">        &quot;min_write_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;object_hash&quot;: 2,</span><br><span class="line">        &quot;options&quot;: &#123;&#125;,</span><br><span class="line">        &quot;pg_num&quot;: 514,</span><br><span class="line">        &quot;pgp_num&quot;: 514,</span><br><span class="line">        &quot;pool&quot;: 6,</span><br><span class="line">        &quot;pool_name&quot;: &quot;default.rgw.buckets.data&quot;,</span><br><span class="line">        &quot;pool_snaps&quot;: [],</span><br><span class="line">        &quot;quota_max_bytes&quot;: 0,</span><br><span class="line">        &quot;quota_max_objects&quot;: 0,</span><br><span class="line">        &quot;read_tier&quot;: -1,</span><br><span class="line">        &quot;removed_snaps&quot;: &quot;[]&quot;,</span><br><span class="line">        &quot;size&quot;: 3,</span><br><span class="line">        &quot;snap_epoch&quot;: 0,</span><br><span class="line">        &quot;snap_mode&quot;: &quot;selfmanaged&quot;,</span><br><span class="line">        &quot;snap_seq&quot;: 0,</span><br><span class="line">        &quot;stripe_width&quot;: 0,</span><br><span class="line">        &quot;target_max_bytes&quot;: 0,</span><br><span class="line">        &quot;target_max_objects&quot;: 0,</span><br><span class="line">        &quot;tier_of&quot;: -1,</span><br><span class="line">        &quot;tiers&quot;: [],</span><br><span class="line">        &quot;type&quot;: 1,</span><br><span class="line">        &quot;use_gmt_hitset&quot;: true,</span><br><span class="line">        &quot;write_tier&quot;: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;application_metadata&quot;: &#123;</span><br><span class="line">            &quot;cephfs&quot;: &#123;&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;auid&quot;: 0,</span><br><span class="line">        &quot;cache_min_evict_age&quot;: 0,</span><br><span class="line">        &quot;cache_min_flush_age&quot;: 0,</span><br><span class="line">        &quot;cache_mode&quot;: &quot;none&quot;,</span><br><span class="line">        &quot;cache_target_dirty_high_ratio_micro&quot;: 600000,</span><br><span class="line">        &quot;cache_target_dirty_ratio_micro&quot;: 400000,</span><br><span class="line">        &quot;cache_target_full_ratio_micro&quot;: 800000,</span><br><span class="line">        &quot;crash_replay_interval&quot;: 0,</span><br><span class="line">        &quot;crush_rule&quot;: 0,</span><br><span class="line">        &quot;erasure_code_profile&quot;: &quot;&quot;,</span><br><span class="line">        &quot;expected_num_objects&quot;: 0,</span><br><span class="line">        &quot;fast_read&quot;: false,</span><br><span class="line">        &quot;flags&quot;: 1,</span><br><span class="line">        &quot;flags_names&quot;: &quot;hashpspool&quot;,</span><br><span class="line">        &quot;grade_table&quot;: [],</span><br><span class="line">        &quot;hit_set_count&quot;: 0,</span><br><span class="line">        &quot;hit_set_grade_decay_rate&quot;: 0,</span><br><span class="line">        &quot;hit_set_params&quot;: &#123;</span><br><span class="line">            &quot;type&quot;: &quot;none&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;hit_set_period&quot;: 0,</span><br><span class="line">        &quot;hit_set_search_last_n&quot;: 0,</span><br><span class="line">        &quot;last_change&quot;: &quot;136&quot;,</span><br><span class="line">        &quot;last_force_op_resend&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;last_force_op_resend_preluminous&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;min_read_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;min_size&quot;: 2,</span><br><span class="line">        &quot;min_write_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;object_hash&quot;: 2,</span><br><span class="line">        &quot;options&quot;: &#123;&#125;,</span><br><span class="line">        &quot;pg_num&quot;: 128,</span><br><span class="line">        &quot;pgp_num&quot;: 128,</span><br><span class="line">        &quot;pool&quot;: 7,</span><br><span class="line">        &quot;pool_name&quot;: &quot;fs_data&quot;,</span><br><span class="line">        &quot;pool_snaps&quot;: [],</span><br><span class="line">        &quot;quota_max_bytes&quot;: 0,</span><br><span class="line">        &quot;quota_max_objects&quot;: 0,</span><br><span class="line">        &quot;read_tier&quot;: -1,</span><br><span class="line">        &quot;removed_snaps&quot;: &quot;[]&quot;,</span><br><span class="line">        &quot;size&quot;: 3,</span><br><span class="line">        &quot;snap_epoch&quot;: 0,</span><br><span class="line">        &quot;snap_mode&quot;: &quot;selfmanaged&quot;,</span><br><span class="line">        &quot;snap_seq&quot;: 0,</span><br><span class="line">        &quot;stripe_width&quot;: 0,</span><br><span class="line">        &quot;target_max_bytes&quot;: 0,</span><br><span class="line">        &quot;target_max_objects&quot;: 0,</span><br><span class="line">        &quot;tier_of&quot;: -1,</span><br><span class="line">        &quot;tiers&quot;: [],</span><br><span class="line">        &quot;type&quot;: 1,</span><br><span class="line">        &quot;use_gmt_hitset&quot;: true,</span><br><span class="line">        &quot;write_tier&quot;: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;application_metadata&quot;: &#123;</span><br><span class="line">            &quot;cephfs&quot;: &#123;&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;auid&quot;: 0,</span><br><span class="line">        &quot;cache_min_evict_age&quot;: 0,</span><br><span class="line">        &quot;cache_min_flush_age&quot;: 0,</span><br><span class="line">        &quot;cache_mode&quot;: &quot;none&quot;,</span><br><span class="line">        &quot;cache_target_dirty_high_ratio_micro&quot;: 600000,</span><br><span class="line">        &quot;cache_target_dirty_ratio_micro&quot;: 400000,</span><br><span class="line">        &quot;cache_target_full_ratio_micro&quot;: 800000,</span><br><span class="line">        &quot;crash_replay_interval&quot;: 0,</span><br><span class="line">        &quot;crush_rule&quot;: 0,</span><br><span class="line">        &quot;erasure_code_profile&quot;: &quot;&quot;,</span><br><span class="line">        &quot;expected_num_objects&quot;: 0,</span><br><span class="line">        &quot;fast_read&quot;: false,</span><br><span class="line">        &quot;flags&quot;: 1,</span><br><span class="line">        &quot;flags_names&quot;: &quot;hashpspool&quot;,</span><br><span class="line">        &quot;grade_table&quot;: [],</span><br><span class="line">        &quot;hit_set_count&quot;: 0,</span><br><span class="line">        &quot;hit_set_grade_decay_rate&quot;: 0,</span><br><span class="line">        &quot;hit_set_params&quot;: &#123;</span><br><span class="line">            &quot;type&quot;: &quot;none&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;hit_set_period&quot;: 0,</span><br><span class="line">        &quot;hit_set_search_last_n&quot;: 0,</span><br><span class="line">        &quot;last_change&quot;: &quot;136&quot;,</span><br><span class="line">        &quot;last_force_op_resend&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;last_force_op_resend_preluminous&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;min_read_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;min_size&quot;: 2,</span><br><span class="line">        &quot;min_write_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;object_hash&quot;: 2,</span><br><span class="line">        &quot;options&quot;: &#123;&#125;,</span><br><span class="line">        &quot;pg_num&quot;: 64,</span><br><span class="line">        &quot;pgp_num&quot;: 64,</span><br><span class="line">        &quot;pool&quot;: 8,</span><br><span class="line">        &quot;pool_name&quot;: &quot;fs_metadata&quot;,</span><br><span class="line">        &quot;pool_snaps&quot;: [],</span><br><span class="line">        &quot;quota_max_bytes&quot;: 0,</span><br><span class="line">        &quot;quota_max_objects&quot;: 0,</span><br><span class="line">        &quot;read_tier&quot;: -1,</span><br><span class="line">        &quot;removed_snaps&quot;: &quot;[]&quot;,</span><br><span class="line">        &quot;size&quot;: 3,</span><br><span class="line">        &quot;snap_epoch&quot;: 0,</span><br><span class="line">        &quot;snap_mode&quot;: &quot;selfmanaged&quot;,</span><br><span class="line">        &quot;snap_seq&quot;: 0,</span><br><span class="line">        &quot;stripe_width&quot;: 0,</span><br><span class="line">        &quot;target_max_bytes&quot;: 0,</span><br><span class="line">        &quot;target_max_objects&quot;: 0,</span><br><span class="line">        &quot;tier_of&quot;: -1,</span><br><span class="line">        &quot;tiers&quot;: [],</span><br><span class="line">        &quot;type&quot;: 1,</span><br><span class="line">        &quot;use_gmt_hitset&quot;: true,</span><br><span class="line">        &quot;write_tier&quot;: -1</span><br><span class="line">    &#125;,</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;application_metadata&quot;: &#123;</span><br><span class="line">            &quot;rgw&quot;: &#123;&#125;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;auid&quot;: 0,</span><br><span class="line">        &quot;cache_min_evict_age&quot;: 0,</span><br><span class="line">        &quot;cache_min_flush_age&quot;: 0,</span><br><span class="line">        &quot;cache_mode&quot;: &quot;none&quot;,</span><br><span class="line">        &quot;cache_target_dirty_high_ratio_micro&quot;: 600000,</span><br><span class="line">        &quot;cache_target_dirty_ratio_micro&quot;: 400000,</span><br><span class="line">        &quot;cache_target_full_ratio_micro&quot;: 800000,</span><br><span class="line">        &quot;crash_replay_interval&quot;: 0,</span><br><span class="line">        &quot;crush_rule&quot;: 0,</span><br><span class="line">        &quot;erasure_code_profile&quot;: &quot;&quot;,</span><br><span class="line">        &quot;expected_num_objects&quot;: 0,</span><br><span class="line">        &quot;fast_read&quot;: false,</span><br><span class="line">        &quot;flags&quot;: 1,</span><br><span class="line">        &quot;flags_names&quot;: &quot;hashpspool&quot;,</span><br><span class="line">        &quot;grade_table&quot;: [],</span><br><span class="line">        &quot;hit_set_count&quot;: 0,</span><br><span class="line">        &quot;hit_set_grade_decay_rate&quot;: 0,</span><br><span class="line">        &quot;hit_set_params&quot;: &#123;</span><br><span class="line">            &quot;type&quot;: &quot;none&quot;</span><br><span class="line">        &#125;,</span><br><span class="line">        &quot;hit_set_period&quot;: 0,</span><br><span class="line">        &quot;hit_set_search_last_n&quot;: 0,</span><br><span class="line">        &quot;last_change&quot;: &quot;139&quot;,</span><br><span class="line">        &quot;last_force_op_resend&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;last_force_op_resend_preluminous&quot;: &quot;0&quot;,</span><br><span class="line">        &quot;min_read_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;min_size&quot;: 2,</span><br><span class="line">        &quot;min_write_recency_for_promote&quot;: 0,</span><br><span class="line">        &quot;object_hash&quot;: 2,</span><br><span class="line">        &quot;options&quot;: &#123;&#125;,</span><br><span class="line">        &quot;pg_num&quot;: 8,</span><br><span class="line">        &quot;pgp_num&quot;: 8,</span><br><span class="line">        &quot;pool&quot;: 9,</span><br><span class="line">        &quot;pool_name&quot;: &quot;default.rgw.buckets.non-ec&quot;,</span><br><span class="line">        &quot;pool_snaps&quot;: [],</span><br><span class="line">        &quot;quota_max_bytes&quot;: 0,</span><br><span class="line">        &quot;quota_max_objects&quot;: 0,</span><br><span class="line">        &quot;read_tier&quot;: -1,</span><br><span class="line">        &quot;removed_snaps&quot;: &quot;[]&quot;,</span><br><span class="line">        &quot;size&quot;: 3,</span><br><span class="line">        &quot;snap_epoch&quot;: 0,</span><br><span class="line">        &quot;snap_mode&quot;: &quot;selfmanaged&quot;,</span><br><span class="line">        &quot;snap_seq&quot;: 0,</span><br><span class="line">        &quot;stripe_width&quot;: 0,</span><br><span class="line">        &quot;target_max_bytes&quot;: 0,</span><br><span class="line">        &quot;target_max_objects&quot;: 0,</span><br><span class="line">        &quot;tier_of&quot;: -1,</span><br><span class="line">        &quot;tiers&quot;: [],</span><br><span class="line">        &quot;type&quot;: 1,</span><br><span class="line">        &quot;use_gmt_hitset&quot;: true,</span><br><span class="line">        &quot;write_tier&quot;: -1</span><br><span class="line">    &#125;</span><br><span class="line">]</span><br></pre></td></tr></table></figure>
+<h1 id="Python调用"><a href="#Python调用" class="headerlink" title="Python调用"></a>Python调用</h1><p>可以通过requests来调用ceph mgr restful的接口，下面通过Python来获取全部存储池信息。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#! /usr/bin/env python3</span><br><span class="line"></span><br><span class="line">import requests</span><br><span class="line"></span><br><span class="line">r = requests.get(&apos;https://192.168.180.138:8003/pool&apos;,verify=False, auth=(&apos;admin&apos;,&apos;839df177-560e-421a-95fc-9f6a1c08236e&apos;))</span><br><span class="line">print(r.json())</span><br></pre></td></tr></table></figure>
+<h1 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h1><ul>
+<li><a href="https://lnsyyj.github.io/2017/11/27/CEPH-MANAGER-DAEMON-RESTful-plugin/" target="_blank" rel="noopener">https://lnsyyj.github.io/2017/11/27/CEPH-MANAGER-DAEMON-RESTful-plugin/</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/ceph/" rel="tag"># ceph</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/09/sql-join/" rel="next" title="SQL Join">
+                <i class="fa fa-chevron-left"></i> SQL Join
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/30/disk-extend/" rel="prev" title="Centos 磁盘扩容">
+                Centos 磁盘扩容 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+    </div>
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/avatar.jpeg"
+                alt="yanyx" />
+            
+              <p class="site-author-name" itemprop="name">yanyx</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">tags</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/yanyixing" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:yixingyan@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#概述"><span class="nav-number">1.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#启动插件"><span class="nav-number">2.</span> <span class="nav-text">启动插件</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#指定IP和PORT"><span class="nav-number">2.1.</span> <span class="nav-text">指定IP和PORT</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#创建用户"><span class="nav-number">2.2.</span> <span class="nav-text">创建用户</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#验证"><span class="nav-number">2.3.</span> <span class="nav-text">验证</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Python调用"><span class="nav-number">3.</span> <span class="nav-text">Python调用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考"><span class="nav-number">4.</span> <span class="nav-text">参考</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2017 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yanyx</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Mist</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+<script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+<script src="//unpkg.com/valine/dist/Valine.min.js"></script>
+
+  
+  <script type="text/javascript">
+    var GUEST = ['nick','mail','link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item=>{
+      return GUEST.indexOf(item)>-1;
+    });
+    new Valine({
+        el: '#comments' ,
+        verify: false,
+        notify: false,
+        appId: 'KL7E0KVEe3TAS3dDvTv9DFyx-gzGzoHsz',
+        appKey: 't4Hm10PJPtlNVNnzuPrgpeP7',
+        placeholder: 'Just go go',
+        avatar:'mm',
+        guest_info:guest,
+        pageSize:'10' || 10,
+    });
+  </script>
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("KL7E0KVEe3TAS3dDvTv9DFyx-gzGzoHsz", "t4Hm10PJPtlNVNnzuPrgpeP7");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
